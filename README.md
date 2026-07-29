@@ -7,3 +7,5 @@
 3. pip install fastapi uvicorn (Instala o servidor uvicorn)
 
 4. pip freeze > requirements.txt (Cria o arquivo requirements.txt)
+
+5. uvicorn main:app --reload (Inicia o servidor uvicorn)
