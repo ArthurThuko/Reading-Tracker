@@ -1,0 +1,8 @@
+# Ambiente Virtual
+backend/.venv/
+backend/venv/
+backend/ENV/
+
+# Arquivos temporários e de cache do Python
+backend/__pycache__/
+backend/*.py[cod]
