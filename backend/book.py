@@ -1,12 +1,10 @@
 class Book:
-    def __init__(self, title, pages, author):
-        self.title = title
-        self.pages = pages
-        self.author = author
-        self.current_page = 0
+    def __init__(self, id: int, name: str):
+        self.id = id
+        self.title = name
     
     def __repr__(self):
-        return f"Book(title='{self.title}', pages={self.pages}, current_page={self.current_page}, author={self.author})"
+        return f"Book(name='{self.name}')"
 
     @property
     def progress_percentage(self):
