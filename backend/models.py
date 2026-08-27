@@ -1,11 +1,12 @@
-from sqlmodel import Field, SQLModel, Relationship
+from datetime import datetime
+from sqlalchemy import String, func
+from sqlalchemy.orm import Mapped, mapped_column
+from database import Base
 
-class Book(SQLModel, table=True):
-    id: int | None = Field(default=None, primary_key=True)
-    title: str = Field(max_length=200)
-    pages: int
-    author_id: int = Field(foreign_key="author.id")
-    user_id: int = Field(foreign_key="user.id")
-    
-    user: User | None = Relationship(back_populates="books")
-    author: Author | None = Relationship(back_populates="books")
+class Book(Base):
+    __tablename__ = "books"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    title: Mapped[str] = mapped_column(String(255))
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(server_default=func.now(), onupdate=func.now())
