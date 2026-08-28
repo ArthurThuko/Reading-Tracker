@@ -2,10 +2,10 @@
 
 1. python -m venv .venv --without-pip (Cria o .venv)
 
-2. .\.venv\Scripts\Activate.ps1 (Ativa o .venv)
+2. Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned (Liberar para o Windonws)
 
-3. pip install fastapi uvicorn (Instala o servidor uvicorn)
+3. .\.venv\Scripts\Activate.ps1 (Ativa o .venv)
 
-4. pip freeze > requirements.txt (Cria o arquivo requirements.txt)
+4. pip install -r requirements.txt (Instala as dependências do arquivo requirements.txt)
 
 5. uvicorn main:app --reload (Inicia o servidor uvicorn)
