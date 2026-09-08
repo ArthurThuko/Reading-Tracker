@@ -1,6 +1,6 @@
 from datetime import datetime
 from fastapi import Depends, FastAPI, HTTPException
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from database import Base, engine, get_session
@@ -10,13 +10,26 @@ Base.metadata.create_all(engine)
 app = FastAPI()
 
 class BookCreate(BaseModel):
-    title: str
+    title: str = Field(min_length=1, max_length=255)
 
 class BookResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
     title: str
+    user_id: int
+    
+class UserCreate(BaseModel):
+    name: str = Field(min_length=1, max_length=100)
+    email: EmailStr = Field(max_length=255)
+    password: str = Field(min_length=8, max_length=72)
+
+class UserRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    name: str
+    email: str
 
 @app.get("/")
 async def read_root():
