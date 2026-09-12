@@ -1,5 +1,5 @@
 from fastapi import Depends, FastAPI, HTTPException
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from security import create_access_token, get_current_user, hash_password, verify_password
@@ -12,15 +12,24 @@ app = FastAPI()
 
 class BookCreate(BaseModel):
     title: str = Field(min_length=1, max_length=255)
-
+    pages: int = Field(gt=0)
+    current_page: int = Field(default=0, ge=0)
+    
+    @model_validator(mode="after")
+    def check_current_page(self):
+        if self.current_page > self.pages:
+            raise ValueError("Current page cannot be greater than total pages")
+        return self
 
 class BookResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
     title: str
+    pages: int
+    current_page: int
+    progress: int
     user_id: int
-
 
 class UserCreate(BaseModel):
     name: str = Field(min_length=1, max_length=100)
@@ -73,7 +82,7 @@ def show_book(book_id: int, db: Session = Depends(get_session), current_user: mo
 
 @app.post("/books", response_model=BookResponse, status_code=201)
 def create_book(book_in: BookCreate, db: Session = Depends(get_session), current_user: models.User = Depends(get_current_user)):
-    new_book = models.Book(title=book_in.title, user_id=current_user.id)
+    new_book = models.Book(title=book_in.title, pages=book_in.pages, current_page=book_in.current_page, user_id=current_user.id)
     db.add(new_book)
     db.commit()
     db.refresh(new_book)
@@ -91,6 +100,8 @@ def update_book(book_id: int, book_in: BookCreate, db: Session = Depends(get_ses
         raise HTTPException(status_code=404, detail="Book not found")
 
     book.title = book_in.title
+    book.pages = book_in.pages
+    book.current_page = book_in.current_page
     db.commit()
     db.refresh(book)
     return book
